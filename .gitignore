@@ -1,0 +1,14 @@
+build
+!build/create_projects.bat
+Win32
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+example
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
