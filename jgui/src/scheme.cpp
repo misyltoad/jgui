@@ -10,7 +10,8 @@ namespace jgui
 {
 	void set_scheme_from_file(const char* name)
 	{
-		FILE *f = fopen(name, "r");
+		FILE *f = nullptr;
+		fopen_s(&f, name, "r");
 		if (!f)
 			return;
 
@@ -34,7 +35,7 @@ namespace jgui
 
 		std::vector<std::string> lines = split_string(std::string(data), "\n");
 		std::vector<ObjectData> objects;
-		std::vector<int> objectStack;
+		std::vector<size_t> objectStack;
 
 		for (usize i = 0; i < lines.size(); i++)
 		{

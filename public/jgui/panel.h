@@ -11,6 +11,7 @@
 namespace jgui
 {
 	class Window;
+	class Panel;
 
 	class jgui_export Panel : public Renderable
 	{
@@ -80,7 +81,7 @@ namespace jgui
 		const char* Name;
 		Colour BackgroundColour;
 		f32 Roundness;
-		std::vector<Panel*> Children;
+		std::vector<Panel*>* Children;
 	};
 }
 

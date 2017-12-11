@@ -4,6 +4,7 @@
 #include <jgui/jgui_common.h>
 #include <stdio.h>
 #include <string>
+#include <jgui_private/string_helpers.h>
 
 namespace jgui
 {
@@ -36,13 +37,13 @@ namespace jgui
 
 		inline void SetFromString(const char* hexcode)
 		{
-			u32 value;
+			u32 value = 0;
 			std::string hexStr = std::string(hexcode);
 			if (hexStr[0] == '#')
 			{
 				hexStr = hexStr.substr(1);
 
-				sscanf(hexStr.c_str(), "%x", &value);
+				sscanf_s(hexStr.c_str(), "%x", &value);
 ;
 				switch (hexStr.length())
 				{

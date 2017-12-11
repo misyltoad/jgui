@@ -50,18 +50,18 @@ namespace jgui
 		if (Glow)
 		{
 			f32 renderX, renderY;
-			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, 0.0f, bounds.width, bounds.height, AlignX, AlignY, &renderX, &renderY, false);
+			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, 0.0f, (f32)bounds.width, (f32)bounds.height, AlignX, AlignY, &renderX, &renderY, false);
 
 			FillColour(GlowColour);
-			AddText(Font, Text, renderX, renderY, Size, Blur, bounds.width, bounds.height, TextAlignment::Left, TextAlignment::Top);
+			AddText(Font, Text, renderX, renderY, Size, Blur, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
 
 			FillColour(TextColour);
-			AddText(Font, Text, renderX, renderY, Size, 0, bounds.width, bounds.height, TextAlignment::Left, TextAlignment::Top);
+			AddText(Font, Text, renderX, renderY, Size, 0, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
 		}
 		else
 		{
 			FillColour(TextColour);
-			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, Blur, bounds.width, bounds.height, AlignX, AlignY);
+			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, Blur, (f32)bounds.width, (f32)bounds.height, AlignX, AlignY);
 		}
 
 		FillPath();

@@ -229,7 +229,7 @@ namespace jgui
 
 		data.nativeHandle = glfwNativeWindowHandle(window);
 		data.fbh = BGFX_INVALID_HANDLE;
-		data.vg = nvgCreate(1, globals::ActiveWindows.size());
+		data.vg = nvgCreate(1, (u8)globals::ActiveWindows.size());
 
 		for (usize i = 0; i < globals::fontData.size(); i++)
 			nvgCreateFontMem(data.vg, globals::fontData[i].Name.c_str(), globals::fontData[i].Data, globals::fontData[i].Size, 0);
@@ -306,8 +306,8 @@ namespace jgui
 
 		Paint();
 
-		for (usize i = 0; i < Children.size(); i++)
-			Children[i]->Render(0, 0);
+		for (usize i = 0; i < Children->size(); i++)
+			(*Children)[i]->Render(0, 0);
 	}
 	void Window::OnCreated()
 	{

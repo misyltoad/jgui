@@ -46,7 +46,7 @@ namespace jgui
 #define DESC_FUNC_FLOAT_WRAPPER(x) \
 	void x (const char* value) \
 	{ \
-		x(atof(value)); \
+		x((f32)atof(value)); \
 	}
 
 #define DESC_FUNC_COLOUR_WRAPPER(x) \

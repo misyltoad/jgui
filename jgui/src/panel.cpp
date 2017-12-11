@@ -25,12 +25,12 @@ namespace jgui
 		, Bounds({})
 		, HoveredOn(false)
 		, ClickedOn(false)
-		, Children()
 		, RenderContext(nullptr)
 		, Name(nullptr)
 		, Roundness(0.0f)
 		, BackgroundColour(0, 0, 0, 0)
 		, MaintainAspectRatio(false)
+		, Children(new std::vector<Panel*>())
 	{
 		scaleX = 1.0f;
 		scaleY = 1.0f;
@@ -127,7 +127,7 @@ namespace jgui
 		auto& bounds = GetBounds();
 		BeginPath();
 		FillColour(BackgroundColour);
-		AddRect(bounds.x, bounds.y, bounds.width, bounds.height, Roundness);
+		AddRect((f32)bounds.x, (f32)bounds.y, (f32)bounds.width, (f32)bounds.height, Roundness);
 		FillPath();
 	}
 	void Panel::Render(u32 xOffset, u32 yOffset)
@@ -137,8 +137,8 @@ namespace jgui
 
 		Paint();
 
-		for (usize i = 0; i < Children.size(); i++)
-			Children[i]->Render(xOffset + Bounds.x, yOffset + Bounds.y);
+		for (usize i = 0; i < Children->size(); i++)
+			(*Children)[i]->Render(xOffset + Bounds.x, yOffset + Bounds.y);
 	}
 	void Panel::OnCreated()
 	{
@@ -215,8 +215,8 @@ namespace jgui
 			scaleY = 1.0f;
 		}
 
-		for (int i = 0; i < Children.size(); i++)
-			Children[i]->RecomputeScale();
+		for (int i = 0; i < Children->size(); i++)
+			(*Children)[i]->RecomputeScale();
 	}
 	Window* Panel::GetWindow()
 	{
@@ -257,14 +257,14 @@ namespace jgui
 	}
 	void Panel::AddChild(Panel* panel)
 	{
-		Children.push_back(panel);
+		Children->push_back(panel);
 	}
 	void Panel::RemoveChild(Panel* panel)
 	{
-		for (usize i = 0; i < Children.size(); i++)
+		for (usize i = 0; i < Children->size(); i++)
 		{
-			if (Children[i] == panel)
-				Children.erase(Children.begin() + i);
+			if ((*Children)[i] == panel)
+				Children->erase(Children->begin() + i);
 		}
 	}
 }
