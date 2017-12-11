@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <jgui_private/string_helpers.h>
 #include "jgui/scheme.h"
 #include "jgui/data_desc.h"
 #include "jgui/panel.h"

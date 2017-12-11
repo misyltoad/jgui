@@ -1,4 +1,5 @@
 #include <jgui/label.h>
+#include <jgui_private/string_helpers.h>
 
 namespace jgui
 {

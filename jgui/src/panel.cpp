@@ -2,6 +2,7 @@
 #include <jgui/colour.h>
 #include <jgui/window.h>
 #include <unordered_map>
+#include <jgui_private/string_helpers.h>
 
 namespace jgui
 {

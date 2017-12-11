@@ -4,7 +4,6 @@
 #include <jgui/jgui_common.h>
 #include <stdio.h>
 #include <string>
-#include <jgui_private/string_helpers.h>
 
 namespace jgui
 {
@@ -35,39 +34,7 @@ namespace jgui
 			SetFromRGB(r, g, b, a);
 		}
 
-		inline void SetFromString(const char* hexcode)
-		{
-			u32 value = 0;
-			std::string hexStr = std::string(hexcode);
-			if (hexStr[0] == '#')
-			{
-				hexStr = hexStr.substr(1);
-
-				sscanf_s(hexStr.c_str(), "%x", &value);
-;
-				switch (hexStr.length())
-				{
-				case 6:
-				{
-					value = value << 8;
-					value += 0xFF;
-					SetFromHex(value);
-				} break;
-
-				case 8:
-				{
-					SetFromHex(value);
-				} break;
-				}
-				return;
-			}
-
-			auto list = comma_list_to_numbers(hexStr);
-			if (list.size() == 3)
-				SetFromRGB(list[0], list[1], list[2], 255);
-			else if (list.size() == 4)
-				SetFromRGB(list[0], list[1], list[2], list[3]);
-		}
+		void SetFromString(const char* string);
 
 		inline void SetFromHex(u32 hexcode)
 		{
