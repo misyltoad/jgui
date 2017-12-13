@@ -7,6 +7,7 @@
 #include <jgui/bounds.h>
 #include <jgui/renderable.h>
 #include <jgui/data_desc.h>
+#include <jgui/time.h>
 
 namespace jgui
 {
@@ -57,6 +58,8 @@ namespace jgui
 
 		Window* GetWindow();
 
+		virtual void Think(f32 time, f32 dt);
+
 		void SetMaintainAspectRatio(bool maintainAspectRatio);
 		DESC_FUNC_BOOL_WRAPPER(SetMaintainAspectRatio);
 
@@ -74,6 +77,9 @@ namespace jgui
 		bool HoveredOn;
 		bool ClickedOn;
 		bool MaintainAspectRatio;
+
+		friend void RenderAllWindows();
+		void RealThink(f32 time, f32 dt);
 
 		Bounds Bounds;
 		Panel* Parent;

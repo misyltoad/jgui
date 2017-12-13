@@ -8,6 +8,7 @@
 #include <bgfx/bgfx.h>
 #endif
 
+#include <jgui_private/time_private.h>
 #include <jgui_private/globals.h>
 #include <jgui/font.h>
 #include <jgui_private/fonts/Roboto-Regular.ttf.h>
@@ -18,6 +19,8 @@ namespace jgui
 {
 	bool init(Renderer renderer, VSyncMode vsync)
 	{
+		InitTime();
+
 		globals::renderer = renderer;
 		globals::vsync = vsync;
 
@@ -32,7 +35,7 @@ namespace jgui
 
 	extern void RenderAllWindows();
 
-	void render()
+	void update()
 	{
 		RenderAllWindows();
 	}

@@ -8,7 +8,7 @@
 namespace jgui
 {
 	bool jgui_export init(Renderer renderer = Renderers::DirectX11, VSyncMode vsync = VSyncModes::DoubleBuffered);
-	void jgui_export render();
+	void jgui_export update();
 	void jgui_export shutdown();
 }
 

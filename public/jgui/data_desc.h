@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include "jgui_common.h"
+#include <jgui/time.h>
 
 #include <algorithm>
 #include <string> 
@@ -16,14 +17,14 @@ namespace jgui
 	struct DataDesc;
 
 	typedef void(Panel::*DataDescFunc)(const char*);
-	typedef const DataDesc&(*ParentDesc)();
+	typedef DataDesc&(*ParentDesc)();
 
 	using FunctionDesc = std::unordered_map<std::string, DataDescFunc>;
 
 	struct jgui_export DataDesc
 	{
 		ParentDesc Parent;
-		FunctionDesc* Functions;
+		FunctionDesc* DataFuncs;
 	};
 
 #define DESC_FUNC_BOOL_WRAPPER(x) \
@@ -68,8 +69,9 @@ namespace jgui
 	typedef y BaseClass;
 
 #define DECLARE_DATA_DESC() \
-	virtual const ::jgui::DataDesc& GetDataDesc(); \
-	static const ::jgui::DataDesc& StaticGetDataDesc();
+public: \
+	virtual ::jgui::DataDesc& GetDataDesc(); \
+	static ::jgui::DataDesc& StaticGetDataDesc(); \
 
 #define START_DATA_DESC_NO_DESC_PARENT(x) \
 	void* CreateInstanceOf##x(const char*) \
@@ -83,25 +85,25 @@ namespace jgui
 		{ \
 		::jgui::Factory[#x] = CreateInstanceOf##x; \
 		desc.Parent = nullptr;  \
-		desc.Functions = new ::jgui::FunctionDesc();
-	
+		desc.DataFuncs = new ::jgui::FunctionDesc(); 
+
 #define START_DATA_DESC(x) \
 	START_DATA_DESC_NO_DESC_PARENT(x) \
 	desc.Parent = & x ::BaseClass::StaticGetDataDesc;
 
 #define DATA_DESC_DATA_FUNC(x, y) \
-		(*desc.Functions)[#x] = (DataDescFunc) &y ;
+		(*desc.DataFuncs)[#x] = (::jgui::DataDescFunc) &y ;
 
 #define END_DATA_DESC(x) \
 		} \
 		::jgui::DataDesc desc; \
 	}; \
 	static x##DataDescCreator x##DataDescCreatorInstance; \
-	const ::jgui::DataDesc& x ::StaticGetDataDesc() \
+	::jgui::DataDesc& x ::StaticGetDataDesc() \
 	{ \
 		return x##DataDescCreatorInstance.desc; \
 	} \
-	const ::jgui::DataDesc& x::GetDataDesc() \
+	::jgui::DataDesc& x::GetDataDesc() \
 	{ \
 		return StaticGetDataDesc(); \
 	}

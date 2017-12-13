@@ -46,7 +46,7 @@ namespace jgui
 			SetFromRGB(r, g, b, a);
 		}
 
-		void SetFromHSV(f32 hue, f32 saturation, f32 value);
+		void SetFromHSL(f32 hue, f32 saturation, f32 lightness, f32 alpha = 1.0f);
 
 		inline void SetFromRGBNormalized(f32 r, f32 g, f32 b, f32 a = 1.0f)
 		{

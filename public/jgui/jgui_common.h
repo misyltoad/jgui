@@ -2,6 +2,8 @@
 #define JGUI_COMMON_H
 
 #if _WIN32
+#pragma comment(lib, "Winmm.lib")
+
 #ifdef JGUI_DLL
 #define jgui_export __declspec( dllexport )
 #define jgui_internal

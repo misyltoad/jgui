@@ -3,6 +3,7 @@
 #include <jgui/window.h>
 #include <unordered_map>
 #include <jgui_private/string_helpers.h>
+#include <jgui/data_desc.h>
 
 namespace jgui
 {
@@ -239,6 +240,10 @@ namespace jgui
 				return nullptr;
 		}
 	}
+	void Panel::Think(f32 time, f32 dt)
+	{
+		
+	}
 	void Panel::SetMaintainAspectRatio(bool maintainAspectRatio)
 	{
 		MaintainAspectRatio = maintainAspectRatio;
@@ -267,5 +272,12 @@ namespace jgui
 			if ((*Children)[i] == panel)
 				Children->erase(Children->begin() + i);
 		}
+	}
+	void Panel::RealThink(f32 time, f32 dt)
+	{
+		Think(time, dt);
+
+		for (usize i = 0; i < Children->size(); i++)
+			(*Children)[i]->Think(time, dt);
 	}
 }

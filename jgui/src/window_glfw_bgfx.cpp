@@ -103,6 +103,14 @@ namespace jgui
 
 	void RenderAllWindows()
 	{
+		static Time firstTime = Time::Now();
+		static Time lastTime = Time::Now();
+		Time currentTime = Time::Now();
+		Time difference = currentTime - lastTime;
+		f32 dt = difference.AsSeconds();
+		f32 time = (currentTime - firstTime).AsSeconds();
+		lastTime = currentTime;
+
 		usize sizeBefore = globals::ActiveWindows.size();
 		if (sizeBefore > 0)
 		{
@@ -139,6 +147,8 @@ namespace jgui
 				);
 
 				nvgBeginFrame(data->vg, Bounds.width, Bounds.height, 1.0f);
+
+				data->jguiPtr->RealThink(time, dt);
 				data->jguiPtr->Render(0, 0);
 				nvgEndFrame(data->vg);
 			}

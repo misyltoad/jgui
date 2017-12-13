@@ -101,7 +101,7 @@ namespace jgui
 					const DataDesc* dataDesc = &panel->GetDataDesc();
 					while (dataDesc)
 					{
-						auto funcs = dataDesc->Functions;
+						auto funcs = dataDesc->DataFuncs;
 						auto index = funcs->find(kv.first);
 						if (index == funcs->end())
 						{
