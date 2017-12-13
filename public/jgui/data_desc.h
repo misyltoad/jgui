@@ -20,10 +20,10 @@ namespace jgui
 
 	using FunctionDesc = std::unordered_map<std::string, DataDescFunc>;
 
-	struct DataDesc
+	struct jgui_export DataDesc
 	{
 		ParentDesc Parent;
-		FunctionDesc Functions;
+		FunctionDesc* Functions;
 	};
 
 #define DESC_FUNC_BOOL_WRAPPER(x) \
@@ -61,14 +61,15 @@ namespace jgui
 
 	jgui_export void* CreateClassByName(const std::string& name);
 
-	extern ClassFactory Factory;
+	extern jgui_export ClassFactory Factory;
 
 #define DECLARE_CLASS(x, y) \
+	public: \
 	typedef y BaseClass;
 
 #define DECLARE_DATA_DESC() \
-	virtual const DataDesc& GetDataDesc(); \
-	static const DataDesc& StaticGetDataDesc();
+	virtual const ::jgui::DataDesc& GetDataDesc(); \
+	static const ::jgui::DataDesc& StaticGetDataDesc();
 
 #define START_DATA_DESC_NO_DESC_PARENT(x) \
 	void* CreateInstanceOf##x(const char*) \
@@ -80,26 +81,27 @@ namespace jgui
 		public: \
 		x##DataDescCreator() \
 		{ \
-		::jgui::Factory[#x] = CreateInstanceOf##x ; \
-		desc.Parent = nullptr;
+		::jgui::Factory[#x] = CreateInstanceOf##x; \
+		desc.Parent = nullptr;  \
+		desc.Functions = new ::jgui::FunctionDesc();
 	
 #define START_DATA_DESC(x) \
 	START_DATA_DESC_NO_DESC_PARENT(x) \
 	desc.Parent = & x ::BaseClass::StaticGetDataDesc;
 
 #define DATA_DESC_DATA_FUNC(x, y) \
-		desc.Functions[#x] = (DataDescFunc) &y ;
+		(*desc.Functions)[#x] = (DataDescFunc) &y ;
 
 #define END_DATA_DESC(x) \
 		} \
-		DataDesc desc; \
+		::jgui::DataDesc desc; \
 	}; \
 	static x##DataDescCreator x##DataDescCreatorInstance; \
-	const DataDesc& x ::StaticGetDataDesc() \
+	const ::jgui::DataDesc& x ::StaticGetDataDesc() \
 	{ \
 		return x##DataDescCreatorInstance.desc; \
 	} \
-	const DataDesc& x::GetDataDesc() \
+	const ::jgui::DataDesc& x::GetDataDesc() \
 	{ \
 		return StaticGetDataDesc(); \
 	}

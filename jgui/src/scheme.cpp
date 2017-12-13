@@ -102,8 +102,8 @@ namespace jgui
 					while (dataDesc)
 					{
 						auto funcs = dataDesc->Functions;
-						auto index = funcs.find(kv.first);
-						if (index == funcs.end())
+						auto index = funcs->find(kv.first);
+						if (index == funcs->end())
 						{
 							if (dataDesc->Parent)
 								dataDesc = & dataDesc->Parent();
@@ -113,7 +113,7 @@ namespace jgui
 							continue;
 						}
 
-						std::invoke(funcs[kv.first], panel, kv.second.c_str());
+						std::invoke((*funcs)[kv.first], panel, kv.second.c_str());
 						break;
 					}
 
