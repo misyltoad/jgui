@@ -63,6 +63,8 @@ namespace jgui
 
 		QUICK_MEMBER_FLOAT(Roundness);
 
+		QUICK_MEMBER_BOOL(Visible);
+
 		QUICK_MEMBER_COLOUR(BackgroundColour);
 
 	protected:

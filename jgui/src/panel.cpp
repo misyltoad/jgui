@@ -19,6 +19,7 @@ namespace jgui
 		DATA_DESC_DATA_FUNC(BackgroundColor, Panel::SetBackgroundColour)
 		DATA_DESC_DATA_FUNC(Roundness, Panel::SetRoundness)
 		DATA_DESC_DATA_FUNC(MaintainAspectRatio, Panel::SetMaintainAspectRatio)
+		DATA_DESC_DATA_FUNC(Visible, Panel::SetVisible)
 	END_DATA_DESC(Panel)
 
 	std::unordered_map<std::string, Panel*> Panels;
@@ -33,6 +34,7 @@ namespace jgui
 		, m_Roundness(0.0f)
 		, m_BackgroundColour(0, 0, 0, 0)
 		, m_MaintainAspectRatio(false)
+		, m_Visible(true)
 		, Children()
 	{
 		scaleX = 1.0f;
@@ -130,6 +132,9 @@ namespace jgui
 	}
 	void Panel::Render(u32 xOffset, u32 yOffset)
 	{
+		if (!m_Visible)
+			return;
+
 		this->xOffset = xOffset;
 		this->yOffset = yOffset;
 
