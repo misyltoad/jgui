@@ -45,4 +45,11 @@ namespace jgui
 		this->b = colour.b;
 		this->a = a;
 	}
+
+	std::string Colour::ToString() const
+	{
+		char colour[16];
+		sprintf_s(colour, "%c %c %c %c", r, g, b, a);
+		return std::string(colour);
+	}
 }

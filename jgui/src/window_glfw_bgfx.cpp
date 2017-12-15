@@ -157,6 +157,11 @@ namespace jgui
 		}
 	}
 
+	Window::Window()
+	{
+		m_IsProportional = false;
+	}
+
 	Window::~Window()
 	{
 		Shutdown();
@@ -171,7 +176,7 @@ namespace jgui
 		//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-		const char* name = GetName();
+		const char* name = GetName().c_str();
 
 		GLFWwindow* window = glfwCreateWindow(static_cast<int>(Bounds.width), static_cast<int>(Bounds.height), name ? name : DEFAULT_WINDOW_TITLE, nullptr, nullptr);
 
@@ -281,7 +286,7 @@ namespace jgui
 		auto* data = GetWindowData(this);
 		if (data)
 		{
-			const char* name = GetName();
+			const char* name = GetName().c_str();
 			glfwSetWindowTitle(data->glfwPtr, name ? name : DEFAULT_WINDOW_TITLE);
 		}
 	}
@@ -316,8 +321,8 @@ namespace jgui
 
 		Paint();
 
-		for (usize i = 0; i < Children->size(); i++)
-			(*Children)[i]->Render(0, 0);
+		for (usize i = 0; i < Children.size(); i++)
+			Children[i]->Render(0, 0);
 	}
 	void Window::OnCreated()
 	{
@@ -330,6 +335,12 @@ namespace jgui
 			return data->vg;
 
 		return nullptr;
+	}
+
+	QUICK_MEMBER_IMPLEMENT_BOOL(Window, IsProportional)
+	{
+		m_IsProportional = value;
+		RecomputeScale();
 	}
 }
 

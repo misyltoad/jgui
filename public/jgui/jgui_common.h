@@ -21,6 +21,12 @@
 
 #endif
 
+#define TOKENPASTE2(x, y) x ## y
+#define TOKENPASTE(x, y) TOKENPASTE2(x, y)
+
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 namespace jgui
 {
 	using i8 = signed char;

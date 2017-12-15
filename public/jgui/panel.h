@@ -33,8 +33,7 @@ namespace jgui
 		virtual void OnClick();
 
 		virtual void OnNameUpdated();
-		void SetName(const char* name);
-		const char* GetName() const;
+		QUICK_MEMBER_STRING(Name);
 
 		virtual void Paint();
 		void Render(u32 xOffset, u32 yOffset);
@@ -60,14 +59,11 @@ namespace jgui
 
 		virtual void Think(f32 time, f32 dt);
 
-		void SetMaintainAspectRatio(bool maintainAspectRatio);
-		DESC_FUNC_BOOL_WRAPPER(SetMaintainAspectRatio);
+		QUICK_MEMBER_BOOL(MaintainAspectRatio);
 
-		void SetRoundness(f32 roundness);
-		DESC_FUNC_FLOAT_WRAPPER(SetRoundness)
+		QUICK_MEMBER_FLOAT(Roundness);
 
-		void SetBackgroundColour(Colour colour);
-		DESC_FUNC_COLOUR_WRAPPER(SetBackgroundColour);
+		QUICK_MEMBER_COLOUR(BackgroundColour);
 
 	protected:
 		virtual void* GetRenderContext();
@@ -76,7 +72,6 @@ namespace jgui
 
 		bool HoveredOn;
 		bool ClickedOn;
-		bool MaintainAspectRatio;
 
 		friend void RenderAllWindows();
 		void RealThink(f32 time, f32 dt);
@@ -84,10 +79,8 @@ namespace jgui
 		Bounds Bounds;
 		Panel* Parent;
 		void* RenderContext;
-		const char* Name;
-		Colour BackgroundColour;
-		f32 Roundness;
-		std::vector<Panel*>* Children;
+		std::string Name;
+		std::vector<Panel*> Children;
 	};
 }
 

@@ -15,34 +15,22 @@ namespace jgui
 		virtual ~Label();
 
 		virtual void Paint();
-		void SetFont(const char* font);
-		void SetText(const char* text);
-		void SetBlur(float blur);
-		DESC_FUNC_FLOAT_WRAPPER(SetBlur);
-		void SetGlow(float blur);
-		DESC_FUNC_FLOAT_WRAPPER(SetGlow);
-		void SetSize(float size);
-		DESC_FUNC_FLOAT_WRAPPER(SetSize);
+		
+		QUICK_MEMBER_STRING(Font);
+		QUICK_MEMBER_STRING(Text);
+		QUICK_MEMBER_FLOAT(Blur);
+		QUICK_MEMBER_BOOL(Glow);
+		QUICK_MEMBER_FLOAT(Size);
+		QUICK_MEMBER_COLOUR(GlowColour);
+		QUICK_MEMBER_COLOUR(TextColour);
 
-		void SetTextColour(Colour colour, bool updateGlowColor = false);
-		DESC_FUNC_COLOUR_WRAPPER(SetTextColour);
-		void SetGlowColour(Colour colour);
-		DESC_FUNC_COLOUR_WRAPPER(SetGlowColour);
-
-		void SetAlignment(const char* data);
+		void SetAlignment(const char* value);
+		void SetAlignment(const std::string& value);
 		void SetAlignment(TextAlignmentX x, TextAlignmentY y);
 
 	protected:
-		TextAlignmentX AlignX;
-		TextAlignmentY AlignY;
-
-		const char* Font;
-		const char* Text;
-		float Blur;
-		float Size;
-		bool Glow;
-		Colour GlowColour;
-		Colour TextColour;
+		TextAlignmentX m_AlignX;
+		TextAlignmentY m_AlignY;
 	};
 }
 

@@ -63,6 +63,8 @@ namespace jgui
 			this->a = (float)a / 255.0f;
 		}
 
+		std::string ToString() const;
+
 		union {
 			float rgba[4];
 			struct {

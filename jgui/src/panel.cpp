@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <jgui_private/string_helpers.h>
 #include <jgui/data_desc.h>
+#include <jgui/command.h>
 
 namespace jgui
 {
@@ -28,22 +29,19 @@ namespace jgui
 		, HoveredOn(false)
 		, ClickedOn(false)
 		, RenderContext(nullptr)
-		, Name(nullptr)
-		, Roundness(0.0f)
-		, BackgroundColour(0, 0, 0, 0)
-		, MaintainAspectRatio(false)
-		, Children(new std::vector<Panel*>())
+		, Name("")
+		, m_Roundness(0.0f)
+		, m_BackgroundColour(0, 0, 0, 0)
+		, m_MaintainAspectRatio(false)
+		, Children()
 	{
 		scaleX = 1.0f;
 		scaleY = 1.0f;
 	}
 	Panel::~Panel()
 	{
-		if (Name)
-		{
+		if (!Name.empty())
 			Panels.erase(Name);
-			free((void*)Name);
-		}
 
 		if (Parent)
 			Parent->RemoveChild(this);
@@ -84,52 +82,50 @@ namespace jgui
 	void Panel::OnEndHover()
 	{
 	}
-	void Panel::OnClick()
+
+	QUICK_MEMBER_IMPLEMENT_STRING(Panel, Name)
 	{
-	}
-	void Panel::OnNameUpdated()
-	{
-	}
-	void Panel::SetName(const char* name)
-	{
-		if (name == Name)
+		if (Name == value)
 			return;
 
-		if (Name)
-		{
+		if (!Name.empty())
 			Panels.erase(Name);
-			free((void*)Name);
-			Name = nullptr;
-		}
 
-		if (name == nullptr)
+		Name = "";
+
+		if (value.empty())
 		{
 			OnNameUpdated();
 			return;
 		}
 
-		usize sizeRequired = strlen(name) + 1;
-		char* allocName = (char*) malloc(sizeRequired);
-		if (allocName)
-		{
-			memcpy(allocName, name, sizeRequired);
-			Name = allocName;
-		}
-
-		Panels[Name] = this;
-
+		Panels[m_Name] = this;
+		m_Name = value;
 		OnNameUpdated();
 	}
-	const char* Panel::GetName() const
+
+	QUICK_MEMBER_IMPLEMENT_BOOL(Panel, MaintainAspectRatio)
 	{
-		return Name;
+		m_MaintainAspectRatio = value;
+		RecomputeScale();
+	}
+
+	QUICK_MEMBER_IMPLEMENT_FLOAT_SIMPLE(Panel, Roundness)
+	QUICK_MEMBER_IMPLEMENT_COLOUR_SIMPLE(Panel, BackgroundColour)
+
+	void Panel::OnClick()
+	{
+		//ExecuteCommand(ClickCommand);
+	}
+	void Panel::OnNameUpdated()
+	{
 	}
 	void Panel::Paint()
 	{
 		auto& bounds = GetBounds();
 		BeginPath();
-		FillColour(BackgroundColour);
-		AddRect((f32)bounds.x, (f32)bounds.y, (f32)bounds.width, (f32)bounds.height, Roundness);
+		FillColour(m_BackgroundColour);
+		AddRect((f32)bounds.x, (f32)bounds.y, (f32)bounds.width, (f32)bounds.height, m_Roundness);
 		FillPath();
 	}
 	void Panel::Render(u32 xOffset, u32 yOffset)
@@ -139,8 +135,8 @@ namespace jgui
 
 		Paint();
 
-		for (usize i = 0; i < Children->size(); i++)
-			(*Children)[i]->Render(xOffset + Bounds.x, yOffset + Bounds.y);
+		for (usize i = 0; i < Children.size(); i++)
+			Children[i]->Render(xOffset + Bounds.x, yOffset + Bounds.y);
 	}
 	void Panel::OnCreated()
 	{
@@ -203,7 +199,7 @@ namespace jgui
 			auto bounds = GetWindow()->GetBounds();
 			scaleX = (bounds.width) / 640.0f;
 			scaleY = (bounds.height) / 480.0f;
-			if (MaintainAspectRatio)
+			if (m_MaintainAspectRatio)
 			{
 				if (scaleX > scaleY * 1.5)
 					scaleX = scaleY;
@@ -217,8 +213,8 @@ namespace jgui
 			scaleY = 1.0f;
 		}
 
-		for (int i = 0; i < Children->size(); i++)
-			(*Children)[i]->RecomputeScale();
+		for (int i = 0; i < Children.size(); i++)
+			Children[i]->RecomputeScale();
 	}
 	Window* Panel::GetWindow()
 	{
@@ -244,40 +240,27 @@ namespace jgui
 	{
 		
 	}
-	void Panel::SetMaintainAspectRatio(bool maintainAspectRatio)
-	{
-		MaintainAspectRatio = maintainAspectRatio;
-		RecomputeScale();
-	}
-	void Panel::SetRoundness(f32 roundness)
-	{
-		Roundness = roundness;
-	}
-	void Panel::SetBackgroundColour(Colour colour)
-	{
-		BackgroundColour = colour;
-	}
 	void* Panel::GetRenderContext()
 	{
 		return RenderContext;
 	}
 	void Panel::AddChild(Panel* panel)
 	{
-		Children->push_back(panel);
+		Children.push_back(panel);
 	}
 	void Panel::RemoveChild(Panel* panel)
 	{
-		for (usize i = 0; i < Children->size(); i++)
+		for (usize i = 0; i < Children.size(); i++)
 		{
-			if ((*Children)[i] == panel)
-				Children->erase(Children->begin() + i);
+			if (Children[i] == panel)
+				Children.erase(Children.begin() + i);
 		}
 	}
 	void Panel::RealThink(f32 time, f32 dt)
 	{
 		Think(time, dt);
 
-		for (usize i = 0; i < Children->size(); i++)
-			(*Children)[i]->Think(time, dt);
+		for (usize i = 0; i < Children.size(); i++)
+			Children[i]->Think(time, dt);
 	}
 }

@@ -16,6 +16,7 @@ namespace jgui
 		DECLARE_CLASS(Window, Panel)
 		DECLARE_DATA_DESC()
 
+		Window();
 		~Window();
 
 		bool Open();
@@ -27,16 +28,7 @@ namespace jgui
 		virtual void OnNameUpdated();
 		virtual void OnBoundsUpdated(bool pos, bool wide);
 
-		inline void SetIsProportional(bool isProportional)
-		{
-			m_bIsProportional = isProportional;
-			RecomputeScale();
-		}
-		inline bool GetIsProportional()
-		{
-			return m_bIsProportional;
-		}
-		DESC_FUNC_BOOL_WRAPPER(SetIsProportional);
+		QUICK_MEMBER_BOOL(IsProportional);
 
 		void Render(u32 xOffset, u32 yOffset);
 
@@ -44,7 +36,6 @@ namespace jgui
 
 	protected:
 		virtual void* GetRenderContext();
-		bool m_bIsProportional = false;
 	};
 }
 

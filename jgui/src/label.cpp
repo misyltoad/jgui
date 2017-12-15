@@ -22,21 +22,19 @@ namespace jgui
 	END_DATA_DESC(Label)
 
 	Label::Label()
-		: Text(nullptr)
-		, Font(defaultFont)
-		, TextColour(255, 255, 255)
-		, Blur(0.0f)
-		, Size(18.0f)
-		, Glow(false)
-		, GlowColour(255, 255, 255)
-		, AlignX(TextAlignment::Left)
-		, AlignY(TextAlignment::Top)
+		: m_Text("")
+		, m_Font(defaultFont)
+		, m_TextColour(255, 255, 255)
+		, m_Blur(0.0f)
+		, m_Size(18.0f)
+		, m_Glow(false)
+		, m_GlowColour(255, 255, 255)
+		, m_AlignX(TextAlignment::Left)
+		, m_AlignY(TextAlignment::Top)
 	{
 	}
 	Label::~Label()
 	{
-		if (Text)
-			free((void*)Text);
 	}
 	void Label::Paint()
 	{
@@ -45,122 +43,71 @@ namespace jgui
 		BeginPath();
 		auto& bounds = GetBounds();
 
-		if (!Text || !Font)
+		if (m_Text.empty() || m_Font.empty())
 			return;
 
-		if (Glow)
+		if (m_Glow)
 		{
 			f32 renderX, renderY;
-			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, 0.0f, (f32)bounds.width, (f32)bounds.height, AlignX, AlignY, &renderX, &renderY, false);
+			AddText(m_Font.c_str(), m_Text.c_str(), (f32)bounds.x, (f32)bounds.y, m_Size, 0.0f, (f32)bounds.width, (f32)bounds.height, m_AlignX, m_AlignY, &renderX, &renderY, false);
 
-			FillColour(GlowColour);
-			AddText(Font, Text, renderX, renderY, Size, Blur, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
+			FillColour(m_GlowColour);
+			AddText(m_Font.c_str(), m_Text.c_str(), renderX, renderY, m_Size, m_Blur, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
 
-			FillColour(TextColour);
-			AddText(Font, Text, renderX, renderY, Size, 0, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
+			FillColour(m_TextColour);
+			AddText(m_Font.c_str(), m_Text.c_str(), renderX, renderY, m_Size, 0, (f32)bounds.width, (f32)bounds.height, TextAlignment::Left, TextAlignment::Top);
 		}
 		else
 		{
-			FillColour(TextColour);
-			AddText(Font, Text, (f32)bounds.x, (f32)bounds.y, Size, Blur, (f32)bounds.width, (f32)bounds.height, AlignX, AlignY);
+			FillColour(m_TextColour);
+			AddText(m_Font.c_str(), m_Text.c_str(), (f32)bounds.x, (f32)bounds.y, m_Size, m_Blur, (f32)bounds.width, (f32)bounds.height, m_AlignX, m_AlignY);
 		}
 
 		FillPath();
 	}
-	void Label::SetFont(const char* font)
-	{
-		if (Font == font)
-			return;
-
-		if (Font && Font != defaultFont)
-		{
-			free((void*)Font);
-			Font = nullptr;
-		}
-
-		if (!font)
-			return;
-
-		usize size = strlen(font) + 1;
-		char* allocFont = (char*)malloc(size);
-		if (allocFont)
-		{
-			memcpy(allocFont, font, size);
-			Font = allocFont;
-		}
-	}
-	void Label::SetText(const char* text)
-	{
-		if (Text == text)
-			return;
-
-		if (Text)
-		{
-			free((void*)Text);
-			Text = nullptr;
-		}
-
-		if (!text)
-			return;
-
-		usize size = strlen(text) + 1;
-		char* allocText = (char*)malloc(size);
-		if (allocText)
-		{
-			memcpy(allocText, text, size);
-			Text = allocText;
-		}
-	}
-	void Label::SetBlur(float blur)
-	{
-		Blur = blur;
-		Glow = false;
-	}
-	void Label::SetGlow(float blur)
-	{
-		Blur = blur;
-		Glow = true;
-	}
-	void Label::SetSize(float size)
-	{
-		Size = size;
-	}
-	void Label::SetGlowColour(jgui::Colour colour)
-	{
-		GlowColour = colour;
-	}
-	void Label::SetTextColour(jgui::Colour colour, bool updateGlowColour)
-	{
-		TextColour = colour;
-		if (updateGlowColour)
-			GlowColour = colour;
-	}
 
 	void Label::SetAlignment(const char* data)
 	{
-		std::string strData = data;
-		auto list = comma_list_to_strings(strData);
+		SetAlignment(std::string(data));
+	}
+
+	void Label::SetAlignment(const std::string& value)
+	{
+		auto list = comma_list_to_strings(value);
 		if (list.size() != 2)
 			return;
 
 		if (list[0] == "Left")
-			AlignX = TextAlignment::Left;
+			m_AlignX = TextAlignment::Left;
 		else if (list[0] == "Center" || list[0] == "Centre")
-			AlignX = TextAlignment::Center;
+			m_AlignX = TextAlignment::Center;
 		else if (list[0] == "Right")
-			AlignX = TextAlignment::Right;
+			m_AlignX = TextAlignment::Right;
 
 		if (list[1] == "Top")
-			AlignY = TextAlignment::Top;
+			m_AlignY = TextAlignment::Top;
 		else if (list[1] == "Middle")
-			AlignY = TextAlignment::Middle;
+			m_AlignY = TextAlignment::Middle;
 		else if (list[1] == "Bottom")
-			AlignY = TextAlignment::Bottom;
+			m_AlignY = TextAlignment::Bottom;
 	}
 
 	void Label::SetAlignment(TextAlignmentX x, TextAlignmentY y)
 	{
-		AlignX = x;
-		AlignY = y;
+		m_AlignX = x;
+		m_AlignY = y;
 	}
+
+	QUICK_MEMBER_IMPLEMENT_STRING_SIMPLE(Label, Font)
+	QUICK_MEMBER_IMPLEMENT_STRING_SIMPLE(Label, Text)
+	QUICK_MEMBER_IMPLEMENT_FLOAT(Label, Blur)
+	{
+		m_Blur = value;
+		m_Glow = false;
+	}
+
+	QUICK_MEMBER_IMPLEMENT_BOOL_SIMPLE(Label, Glow)
+	QUICK_MEMBER_IMPLEMENT_FLOAT_SIMPLE(Label, Size)
+	QUICK_MEMBER_IMPLEMENT_COLOUR_SIMPLE(Label, GlowColour)
+	QUICK_MEMBER_IMPLEMENT_COLOUR_SIMPLE(Label, TextColour)
 }
