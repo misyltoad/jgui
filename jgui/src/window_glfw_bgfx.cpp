@@ -176,9 +176,9 @@ namespace jgui
 		//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-		const char* name = GetName().c_str();
+		std::string name = GetName();
 
-		GLFWwindow* window = glfwCreateWindow(static_cast<int>(Bounds.width), static_cast<int>(Bounds.height), name ? name : DEFAULT_WINDOW_TITLE, nullptr, nullptr);
+		GLFWwindow* window = glfwCreateWindow(static_cast<int>(Bounds.width), static_cast<int>(Bounds.height), name.empty() ? DEFAULT_WINDOW_TITLE : name.c_str(), nullptr, nullptr);
 
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
