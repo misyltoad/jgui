@@ -286,8 +286,8 @@ namespace jgui
 		auto* data = GetWindowData(this);
 		if (data)
 		{
-			const char* name = GetName().c_str();
-			glfwSetWindowTitle(data->glfwPtr, name ? name : DEFAULT_WINDOW_TITLE);
+			std::string name = GetName();
+			glfwSetWindowTitle(data->glfwPtr, name.empty() ? DEFAULT_WINDOW_TITLE : name.c_str());
 		}
 	}
 	void Window::OnBoundsUpdated(bool pos, bool wide)
