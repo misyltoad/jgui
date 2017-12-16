@@ -7,10 +7,10 @@ namespace jgui
 {
 	struct Bounds
 	{
-		static constexpr u32 InvalidPosition = (u32)(-1);
+		static constexpr f32 InvalidPosition = -1;
 
-		u32 x = InvalidPosition, y = InvalidPosition;
-		u32 width = 0, height = 0;
+		f32 x = InvalidPosition, y = InvalidPosition;
+		f32 width = 0, height = 0;
 	};
 }
 

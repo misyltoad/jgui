@@ -25,28 +25,25 @@ namespace jgui
 	std::unordered_map<std::string, Panel*> Panels;
 
 	Panel::Panel()
-		: Parent(nullptr)
-		, Bounds({})
-		, HoveredOn(false)
-		, ClickedOn(false)
-		, RenderContext(nullptr)
-		, Name("")
+		: m_Parent(nullptr)
+		, m_Bounds({})
+		, m_RenderContext(nullptr)
 		, m_Roundness(0.0f)
 		, m_BackgroundColour(0, 0, 0, 0)
 		, m_MaintainAspectRatio(false)
 		, m_Visible(true)
-		, Children()
+		, m_Children()
 	{
 		scaleX = 1.0f;
 		scaleY = 1.0f;
 	}
 	Panel::~Panel()
 	{
-		if (!Name.empty())
-			Panels.erase(Name);
+		if (!m_Name.empty())
+			Panels.erase(m_Name);
 
-		if (Parent)
-			Parent->RemoveChild(this);
+		if (m_Parent)
+			m_Parent->RemoveChild(this);
 	}
 	Panel* Panel::FindPanel(const char* name)
 	{
@@ -58,18 +55,19 @@ namespace jgui
 	}
 	Panel* Panel::GetParent()
 	{
-		return Parent;
+		return m_Parent;
 	}
-	void Panel::SetParent(Panel* parent)
+	void Panel::SetParent(Panel* parent, bool tellParent)
 	{
-		if (Parent)
-			Parent->RemoveChild(this);
+		if (m_Parent && tellParent)
+			m_Parent->RemoveChild(this);
 
-		Parent = parent;
+		m_Parent = parent;
 		if (parent)
 		{
-			parent->AddChild(this);
-			RenderContext = parent->GetRenderContext();
+			if (tellParent)
+				parent->AddChild(this);
+			m_RenderContext = parent->GetRenderContext();
 		}
 
 		RecomputeScale();
@@ -87,13 +85,13 @@ namespace jgui
 
 	QUICK_MEMBER_IMPLEMENT_STRING(Panel, Name)
 	{
-		if (Name == value)
+		if (m_Name == value)
 			return;
 
-		if (!Name.empty())
-			Panels.erase(Name);
+		if (!m_Name.empty())
+			Panels.erase(m_Name);
 
-		Name = "";
+		m_Name = "";
 
 		if (value.empty())
 		{
@@ -101,8 +99,8 @@ namespace jgui
 			return;
 		}
 
-		Panels[m_Name] = this;
 		m_Name = value;
+		Panels[m_Name] = this;
 		OnNameUpdated();
 	}
 
@@ -112,6 +110,7 @@ namespace jgui
 		RecomputeScale();
 	}
 
+	QUICK_MEMBER_IMPLEMENT_BOOL_SIMPLE(Panel, Visible)
 	QUICK_MEMBER_IMPLEMENT_FLOAT_SIMPLE(Panel, Roundness)
 	QUICK_MEMBER_IMPLEMENT_COLOUR_SIMPLE(Panel, BackgroundColour)
 
@@ -130,7 +129,7 @@ namespace jgui
 		AddRect((f32)bounds.x, (f32)bounds.y, (f32)bounds.width, (f32)bounds.height, m_Roundness);
 		FillPath();
 	}
-	void Panel::Render(u32 xOffset, u32 yOffset)
+	void Panel::Render(f32 xOffset, f32 yOffset)
 	{
 		if (!m_Visible)
 			return;
@@ -140,22 +139,22 @@ namespace jgui
 
 		Paint();
 
-		for (usize i = 0; i < Children.size(); i++)
-			Children[i]->Render(xOffset + Bounds.x, yOffset + Bounds.y);
+		for (usize i = 0; i < m_Children.size(); i++)
+			m_Children[i]->Render(xOffset + m_Bounds.x, yOffset + m_Bounds.y);
 	}
 	void Panel::OnCreated()
 	{
 	}
 	Bounds& Panel::GetBounds()
 	{
-		return Bounds;
+		return m_Bounds;
 	}
 	void Panel::OnBoundsUpdated(bool pos, bool wide)
 	{
 	}
 	void Panel::SetBounds(const jgui::Bounds& bounds)
 	{
-		Bounds = bounds;
+		m_Bounds = bounds;
 		OnBoundsUpdated(true, true);
 	}
 	void Panel::SetBounds(const char* data)
@@ -166,10 +165,10 @@ namespace jgui
 	}
 	void Panel::SetBounds(u32 x, u32 y, u32 width, u32 height)
 	{
-		Bounds.x = x;
-		Bounds.y = y;
-		Bounds.width = width;
-		Bounds.height = height;
+		m_Bounds.x = x;
+		m_Bounds.y = y;
+		m_Bounds.width = width;
+		m_Bounds.height = height;
 		OnBoundsUpdated(true, true);
 	}
 	void Panel::SetSize(const char* data)
@@ -180,8 +179,8 @@ namespace jgui
 	}
 	void Panel::SetSize(u32 width, u32 height)
 	{
-		Bounds.width = width;
-		Bounds.height = height;
+		m_Bounds.width = width;
+		m_Bounds.height = height;
 		OnBoundsUpdated(false, true);
 	}
 	void Panel::SetPosition(const char* data)
@@ -192,13 +191,12 @@ namespace jgui
 	}
 	void Panel::SetPosition(u32 x, u32 y)
 	{
-		Bounds.x = x;
-		Bounds.y = y;
+		m_Bounds.x = x;
+		m_Bounds.y = y;
 		OnBoundsUpdated(true, false);
 	}
 	void Panel::RecomputeScale()
 	{
-
 		if (GetWindow() && GetWindow()->GetIsProportional())
 		{
 			auto bounds = GetWindow()->GetBounds();
@@ -206,10 +204,8 @@ namespace jgui
 			scaleY = (bounds.height) / 480.0f;
 			if (m_MaintainAspectRatio)
 			{
-				if (scaleX > scaleY * 1.5)
-					scaleX = scaleY;
-				else
-					scaleY = scaleX;
+				scaleX = MIN(scaleX, scaleY);
+				scaleY = scaleX;
 			}
 		}
 		else
@@ -218,8 +214,8 @@ namespace jgui
 			scaleY = 1.0f;
 		}
 
-		for (int i = 0; i < Children.size(); i++)
-			Children[i]->RecomputeScale();
+		for (int i = 0; i < m_Children.size(); i++)
+			m_Children[i]->RecomputeScale();
 	}
 	Window* Panel::GetWindow()
 	{
@@ -247,25 +243,33 @@ namespace jgui
 	}
 	void* Panel::GetRenderContext()
 	{
-		return RenderContext;
+		return m_RenderContext;
 	}
 	void Panel::AddChild(Panel* panel)
 	{
-		Children.push_back(panel);
+		m_Children.push_back(panel);
+		panel->SetParent(this, false);
 	}
 	void Panel::RemoveChild(Panel* panel)
 	{
-		for (usize i = 0; i < Children.size(); i++)
+		if (panel->GetParent() == this)
+			panel->SetParent(nullptr, false);
+
+		for (usize i = 0; i < m_Children.size(); i++)
 		{
-			if (Children[i] == panel)
-				Children.erase(Children.begin() + i);
+			if (m_Children[i] == panel)
+				m_Children.erase(m_Children.begin() + i);
 		}
+	}
+	const std::vector<Panel*>& Panel::GetChildren()
+	{
+		return m_Children;
 	}
 	void Panel::RealThink(f32 time, f32 dt)
 	{
 		Think(time, dt);
 
-		for (usize i = 0; i < Children.size(); i++)
-			Children[i]->Think(time, dt);
+		for (usize i = 0; i < m_Children.size(); i++)
+			m_Children[i]->Think(time, dt);
 	}
 }

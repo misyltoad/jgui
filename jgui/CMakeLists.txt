@@ -64,6 +64,7 @@ target_compile_definitions( jgui PRIVATE __STDC_FORMAT_MACROS JGUI_DLL JGUI_USE_
 
 target_include_directories( jgui PRIVATE ../thirdparty/bx/3rdparty )
 target_include_directories( jgui PRIVATE ../thirdparty/bx/include )
+target_include_directories( jgui PRIVATE ../thirdparty/nanosvg/src )
 if (MSVC)
 target_include_directories( jgui PRIVATE ../thirdparty/bx/include/compat/msvc )
 endif()

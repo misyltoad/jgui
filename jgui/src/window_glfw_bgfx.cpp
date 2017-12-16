@@ -178,7 +178,8 @@ namespace jgui
 
 		std::string name = GetName();
 
-		GLFWwindow* window = glfwCreateWindow(static_cast<int>(Bounds.width), static_cast<int>(Bounds.height), name.empty() ? DEFAULT_WINDOW_TITLE : name.c_str(), nullptr, nullptr);
+		auto bounds = GetBounds();
+		GLFWwindow* window = glfwCreateWindow(static_cast<int>(bounds.width), static_cast<int>(bounds.height), name.empty() ? DEFAULT_WINDOW_TITLE : name.c_str(), nullptr, nullptr);
 
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
@@ -186,7 +187,7 @@ namespace jgui
 		{
 			const GLFWvidmode* desktop = glfwGetVideoMode(monitor);
 			if (desktop)
-				glfwSetWindowPos(window, (desktop->width - Bounds.width) / 2, (desktop->height - Bounds.height) / 2);
+				glfwSetWindowPos(window, (desktop->width - bounds.width) / 2, (desktop->height - bounds.height) / 2);
 		}
 
 		if (!window)
@@ -226,13 +227,13 @@ namespace jgui
 			if (!bgfx::init(renderer))
 				return false;
 
-			bgfx::reset(Bounds.width, Bounds.height, globals::vsync == VSyncModes::DoubleBuffered ? BGFX_RESET_VSYNC : 0);
+			bgfx::reset(bounds.width, bounds.height, globals::vsync == VSyncModes::DoubleBuffered ? BGFX_RESET_VSYNC : 0);
 
 			//bgfx::setDebug(BGFX_DEBUG_STATS);
 		}
 
-		if (Bounds.x != Bounds::InvalidPosition && Bounds.y != Bounds::InvalidPosition)
-			glfwSetWindowPos(window, Bounds.x, Bounds.y);
+		if (bounds.x != Bounds::InvalidPosition && bounds.y != Bounds::InvalidPosition)
+			glfwSetWindowPos(window, bounds.x, bounds.y);
 
 		glfwSetWindowSizeCallback(window, ResizeCallback);
 		glfwSetWindowPosCallback(window, PositionCallback);
@@ -299,30 +300,33 @@ namespace jgui
 			glfwGetWindowPos(data->glfwPtr, &x, &y);
 			glfwGetWindowSize(data->glfwPtr, &w, &h);
 
+			Bounds& bounds = GetBounds();
+
 			if (pos)
 			{
-				if (x != Bounds.x || Bounds.y != y)
-					glfwSetWindowPos(data->glfwPtr, Bounds.x, Bounds.y);
+				if (x != bounds.x || bounds.y != y)
+					glfwSetWindowPos(data->glfwPtr, bounds.x, bounds.y);
 			}
 
 			if (wide)
 			{
-				if (w != Bounds.width || h != Bounds.height)
-					glfwSetWindowSize(data->glfwPtr, Bounds.width, Bounds.height);
+				if (w != bounds.width || h != bounds.height)
+					glfwSetWindowSize(data->glfwPtr, bounds.width, bounds.height);
 			}
 
 			RecomputeScale();
 		}
 	}
-	void Window::Render(u32 xOffset, u32 yOffset)
+	void Window::Render(f32 xOffset, f32 yOffset)
 	{
 		this->xOffset = 0;
 		this->yOffset = 0;
 
 		Paint();
 
-		for (usize i = 0; i < Children.size(); i++)
-			Children[i]->Render(0, 0);
+		auto& children = GetChildren();
+		for (usize i = 0; i < children.size(); i++)
+			children[i]->Render(0, 0);
 	}
 	void Window::OnCreated()
 	{

@@ -30,7 +30,7 @@ namespace jgui
 
 		QUICK_MEMBER_BOOL(IsProportional);
 
-		void Render(u32 xOffset, u32 yOffset);
+		virtual void Render(f32 xOffset, f32 yOffset);
 
 		virtual void OnCreated();
 

@@ -13,3 +13,6 @@
 [submodule "thirdparty/bimg"]
 	path = thirdparty/bimg
 	url = https://github.com/bkaradzic/bimg
+[submodule "thirdparty/nanosvg"]
+	path = thirdparty/nanosvg
+	url = https://github.com/memononen/nanosvg

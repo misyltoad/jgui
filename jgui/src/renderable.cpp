@@ -107,6 +107,48 @@ namespace jgui
 		scaleX(thickness);
 		nvgStrokeWidth(vg, thickness);
 	}
+	void Renderable::MoveTo(f32 x, f32 y)
+	{
+		scaleX(x);
+		scaleY(y);
+
+		x += xOffset * scaleX;
+		y += yOffset * scaleY;
+
+		nvgMoveTo(vg, x, y);
+	}
+	void Renderable::BezierTo(f32 c1x, f32 c1y, f32 c2x, f32 c2y, f32 x, f32 y)
+	{
+		scaleX(c1x);
+		scaleY(c1y);
+		
+		scaleX(c2x);
+		scaleY(c2y);
+
+		scaleX(x);
+		scaleY(y);
+
+		x += xOffset * scaleX;
+		y += yOffset * scaleY;
+
+		c1x += xOffset * scaleX;
+		c1y += yOffset * scaleY;
+
+		c2x += xOffset * scaleX;
+		c2y += yOffset * scaleY;
+
+		nvgBezierTo(vg, c1x, c1y, c2x, c2y, x, y);
+	}
+	void Renderable::LineTo(f32 x, f32 y)
+	{
+		scaleX(x);
+		scaleY(y);
+
+		x += xOffset * scaleX;
+		y += yOffset * scaleY;
+
+		nvgLineTo(vg, x, y);
+	}
 	void Renderable::StrokePath()
 	{
 		nvgStroke(vg);

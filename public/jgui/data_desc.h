@@ -164,7 +164,7 @@ namespace jgui
 	IMPL_MAIN_QUICK_SET_STRING(x)
 
 #define IMPL_QUICK_MEMBER_TYPE(x, y) \
-	private: \
+	protected: \
 		y m_##x ; \
 	public:
 

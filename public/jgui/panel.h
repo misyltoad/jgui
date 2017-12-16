@@ -25,7 +25,7 @@ namespace jgui
 		static Panel* FindPanel(const char* name);
 
 		Panel* GetParent();
-		void SetParent(Panel* parent);
+		void SetParent(Panel* parent, bool tellParent = true);
 		void SetParentByName(const char* parentName);
 
 		virtual void OnStartHover();
@@ -36,7 +36,7 @@ namespace jgui
 		QUICK_MEMBER_STRING(Name);
 
 		virtual void Paint();
-		void Render(u32 xOffset, u32 yOffset);
+		virtual void Render(f32 xOffset, f32 yOffset);
 
 		virtual void OnCreated();
 
@@ -53,7 +53,7 @@ namespace jgui
 		void SetPosition(const char* data);
 		void SetPosition(u32 x, u32 y);
 
-		void RecomputeScale();
+		virtual void RecomputeScale();
 
 		Window* GetWindow();
 
@@ -67,22 +67,21 @@ namespace jgui
 
 		QUICK_MEMBER_COLOUR(BackgroundColour);
 
-	protected:
-		virtual void* GetRenderContext();
 		void AddChild(Panel* panel);
 		void RemoveChild(Panel* panel);
+		const std::vector<Panel*>& GetChildren();
+	protected:
+		virtual void* GetRenderContext();
 
-		bool HoveredOn;
-		bool ClickedOn;
-
+	private:
 		friend void RenderAllWindows();
 		void RealThink(f32 time, f32 dt);
 
-		Bounds Bounds;
-		Panel* Parent;
-		void* RenderContext;
-		std::string Name;
-		std::vector<Panel*> Children;
+		Bounds m_Bounds;
+		Panel* m_Parent;
+		void* m_RenderContext;
+
+		std::vector<Panel*> m_Children;
 	};
 }
 
